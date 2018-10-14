@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script type="text/javascript">
+		window.onload=function(){
+			var canvas = document.getElementById("canvas");
+			var cx= canvas.getContext("2d");
+			cx.fillStyle="pink";
+			cx.fillRect(0,0,600,600);
+			// 设置渐变色
+			var g= cx.createLinearGradient(0,0,600,600);
+				g.addColorStop(0.2,"rgba(255,0,0,0.2)");
+				g.addColorStop(0.5,"rgba(255,255,0,0.5)");
+				g.addColorStop(0.7,"rgba(255,0,255,0.7)");
+				g.addColorStop(1,"rgba(0,255,255,0.7)");
+			// 填充对象
+			cx.fillStyle=g;
+			var x=30;
+			var y=20;
+			var r=10;
+			for (var i=0;i<10;i++){
+				cx.beginPath();
+				// 更改圆的半径
+				cx.arc(x*i,y*i,r*i,0,Math.PI*2,true);
+				cx.closePath();
+				cx.fill();
+			}			
+		}
+	</script>
+</head>
+<body>
+	<canvas id="canvas" width="600" height="600"></canvas>
+</body>
+</html>

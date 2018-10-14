@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		/*common*/
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		button{
+			width: 50px;		
+		}
+		.outer{
+			width: 1000px;
+			/*height: 800px;*/
+			margin: 0 auto;
+			overflow: hidden;
+			background-color: lightblue;
+		}
+		/*form*/
+		.top{
+			width: 300px;
+			height: 160px;
+			margin: 0 auto;
+			margin-top: 30px;
+			background-color: lightgreen;
+		}
+		.top form{
+			width: 200px;
+			margin: 0 auto ;
+			margin-top: 10px;
+			/*background-color: blue;*/
+		}
+		.top form input{
+			width: 120px;
+		}
+		.top form button{
+			width: 50px;
+			margin-left: 75px;
+			margin-top: 20px;
+		}
+
+		/*table*/
+		.bottom{
+			width: 800px;
+			background-color: lightgreen;
+			margin: 100px auto 50px;
+			overflow: hidden;
+		}
+		.bottom>button{
+			margin-left: 50px;
+		}
+		.bottom table{
+			margin: 0 auto;
+		}
+		.bottom table td{
+			width: 90px;
+			height: 50px;
+			text-align: center;
+		}
+
+		.bottom table .hidden{
+			display: none;
+		}
+		.bottom .sql{
+			float: right;
+			margin-top: 40px;
+		}
+		.bottom .sql input{
+			width: 100px;
+		}
+
+	</style>
+
+	<script type="text/javascript">
+		window.onload=function(){
+			var button = document.getElementsByTagName('button');
+			var tbody = document.getElementsByTagName('tbody')[0];
+			var hidtd=document.getElementsByClassName("hidden")[0];
+			var input = document.getElementsByTagName('input');
+			var tr = document.getElementsByTagName('tr');
+			// 创建数据库
+			function getConnection(handler){
+				var request=window.indexedDB.open("users",5);
+				request.onsuccess=function(event){
+					console.log("创建成功：",arguments);
+					if(handler){
+						handler(event.target.result);
+					}
+				}
+				request.onerror=function(){
+					console.log("创建失败",arguments);
+				}
+				request.onupgradeneeded=function(event){
+					console.log("更新成功：",arguments);
+					//2.获取数据库
+					var db=event.target.result;
+					//3.创建表
+					db.createObjectStore("web1801",{
+	                    keyPath:"stuId",
+	                    autoIncrement:true
+	                });
+				}
+			}
+			// 封装 获取数据库的所有数据 的函数
+			function getData(){
+				getConnection(function(db){
+		            var t=db.transaction(["web1801"],"readwrite");
+		            var store=t.objectStore("web1801");
+		            var s=store.getAll();
+		            s.onsuccess=function(event){
+		            	var a = event.target.result;
+		            	for (i=0;i<a.length;i++){
+		            		var tr=document.createElement("tr");
+			            	for(var key in a[i]){
+			            		var td=document.createElement("td");
+			            		td.innerHTML=a[i][key];
+			            		tr.appendChild(td);
+			            	}
+			            	var clonetd=hidtd.cloneNode(true);
+			            	tr.appendChild(clonetd);
+			            	clonetd.removeAttribute("class");
+			            	tbody.appendChild(tr);
+		            	}
+
+		            } 	
+				});	
+			}
+
+
+
+
+
+			// 提交    未控制null
+			button[0].onclick=function(){
+				getConnection(function(db){
+		            var t=db.transaction(["web1801"],"readwrite");
+		            var store=t.objectStore("web1801");
+		            var obj = new Object();
+		            obj.id=input[0].value;
+		            obj.name=input[1].value;
+		            obj.gender=input[2].value;
+		            obj.tel=input[3].value;
+		            store.put(obj);
+				});
+			}
+			// 获取数据
+			button[1].onclick=function(){
+				// 清空所有数据
+				Array.prototype.slice.call(tr, 1).forEach(function(item, index) {
+					tbody.removeChild(item);	
+				})
+				getData();
+			}
+			// 删除
+			button[2].onclick = function() {
+				Array.prototype.slice.call(input, 0).forEach(function(item, index) {
+					if(item.checked) {
+						tbody.removeChild(item.parentNode.parentNode);
+					}
+				})
+			}
+
+			// 查找
+			button[3].onclick=function(){
+				var find = document.getElementById("find");
+				// 获取查找的name
+				var content= find.value;
+				Array.prototype.slice.call(tr, 1).forEach(function(item, index) {
+					if(item.firstChild.nextSibling.innerHTML!=content){
+						tbody.removeChild(item);
+					}
+				})
+			}
+
+
+
+
+
+		}
+	</script>
+</head>
+<body>
+	<div class="outer">
+		<div class="top">
+			<form action="">
+			<br>
+				姓名：<input type="text" required="true">
+				<br>
+				性别：<input type="text" required="true">
+				<br>
+				年龄：<input type="text" required="true" >
+				<!-- <input type="text"  required="true" maxlength="11" onkeyup="value=value.replace(/[^\d]/g,'') "onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\d]/g,''))"/> -->
+				<br>
+				电话：<input type="text" required="true">
+				<!-- <input type="text" maxlength="11" onkeyup="value=value.replace(/[^\d]/g,'') "onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\d]/g,''))"/> -->
+				<button>提交</button>
+			</form>
+			<!-- <button>提交</button> -->
+		</div>
+
+		<div class="bottom">
+			<button>获取</button>
+			<table border="2px" cellpadding="0" cellspacing="0" >
+				<tr>
+					<td>id</td>
+					<td>name</td>
+					<td>gender</td>
+					<td>tel</td>
+					<td>stuid</td>
+					<td>&nbsp;</td>
+					<td class="hidden"><input type="checkbox" name="" id="hidtd"></td>
+				</tr>
+			</table>
+			<div class="sql">
+				<button>删除</button>
+				<input type="text" id="find">
+				<button>查找</button>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

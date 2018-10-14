@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		.outer{
+			width: 250px;
+			height: 200px;
+			margin-left: 500PX;
+			position: relative;		
+		}
+		/*图片*/
+		.top{
+			overflow: hidden;
+		}
+		.top ul{
+			width: 750px;
+			background-color: red;
+			/*overflow: hidden;*/
+			margin-left: -500px;
+		}
+		.top ul li{
+			width:  250px;
+			height: 200px;
+			float: left;
+			list-style: none;
+		}
+		/*按钮*/
+		.bottom{
+			height: 20px;
+			position: absolute;
+			bottom: 3px;
+			left: 50px;
+			right: 50px;
+		}
+		.bottom span{
+			margin-left: 25px;
+			display: inline-block;
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			background-color: white;
+			text-align: center;
+			color: white;
+			cursor: pointer;
+			font-size: 5px;
+			color: black;
+			text-align: center;
+		}
+		.bottom .color{
+			background-color: red;
+		}
+	</style>
+	<script type="text/javascript">
+		window.onload=function(){
+			var ul = document.getElementsByTagName("ul")[0];
+			var li = document.getElementsByTagName("li");
+			var span = document.getElementsByTagName("span");
+			// 清除所有span颜色
+			function clean(){
+				span[0].removeAttribute("class");
+				span[1].removeAttribute("class");
+				span[2].removeAttribute("class");
+			}
+			function test(){
+				id = setInterval(function(){
+					// 控制span自动显示
+					if (li[2].offsetLeft==150) {
+						clean();
+						span[1].setAttribute("class","color");
+					} else if (li[2].offsetLeft==400) {
+						clean();
+						span[2].setAttribute("class","color");
+					} else if (li[2].offsetLeft==0) {
+						clean();
+						span[0].setAttribute("class","color");
+					}
+					// console.log(li[1].offsetLeft);
+						// 每次移动250px
+					ul.style.marginLeft=ul.offsetLeft+5+"px";
+					// 调整ul marginLeft 使得图片循环播放 三张图片放完后 回到第一张
+					if(parseInt(ul.style.marginLeft)>0){
+						ul.style.marginLeft=-500+"px";
+					}
+				},50);	
+			}
+			// 进入页面默认设置第一个span显示颜色
+			span[0].setAttribute("class","color");
+			test();
+			// 鼠标移入
+			Array.prototype.slice.call(span,0).forEach(function(item,index){
+				span[index].onmouseover=(function(a){
+					return function(){
+						clearInterval(id);
+						clean();
+						span[index].setAttribute("class","color");
+						ul.style.marginLeft=-500+a*250+"px";
+					}
+				})(index);
+			});
+			// 鼠标移出按钮
+			Array.prototype.slice.call(span,0).forEach(function(item){
+				item.onmouseout=function(){
+					clean();
+					test();
+				}
+			});
+		}
+	</script>
+</head>
+<body>
+	<div class="outer">
+		<div class="top">
+			<ul>
+				<li><img src="11.jpg" width="100%" height="100%"></li>
+				<li><img src="12.jpg" width="100%" height="100%"></li>
+				<li><img src="13.jpg" width="100%" height="100%"></li>
+			</ul>
+		</div>
+		<div class="bottom">
+			<span >1</span>
+			<span >2</span>
+			<span >3</span>
+			<!-- <input type="radio">
+			<input type="radio">
+			<input type="radio"> -->
+		</div>
+			
+	</div>
+</body>
+</html>

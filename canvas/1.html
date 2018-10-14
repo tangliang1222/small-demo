@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+	<script type="text/javascript">
+		window.onload=function(){
+			var canvas = document.getElementById("canvas");
+			var cx = canvas.getContext("2d");
+			// 画布颜色
+			cx.fillStyle="lightblue";
+			// 绘制画布
+			cx.fillRect(0,0,500,500);
+			// 图案颜色
+			cx.fillStyle="rgba(255,0,0,0.3)";
+			// 移动坐标轴
+			cx.translate(250,100);
+			// 绘制多个图案
+			for(var i=0;i<60;i++){
+				cx.translate(25,25);
+				cx.scale(0.95,0.95);
+				// cx.fillRect(0,0,100,50);
+				cx.rotate(Math.PI/10);
+				cx.fillRect(0,0,100,50);
+			}
+
+		}
+	</script>
+<body>
+	<canvas id="canvas" width="600" height="600"></canvas>
+</body>
+</html>
